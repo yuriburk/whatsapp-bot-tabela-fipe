@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/yuriburk/whatsapp-bot-tabela-fipe#readme",
   "dependencies": {
+    "@google-cloud/dialogflow": "^4.6.0",
+    "axios": "^0.24.0",
     "venom-bot": "^4.0.4"
   },
   "devDependencies": {

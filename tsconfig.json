@@ -10,7 +10,9 @@
     "allowJs": true,
     "downlevelIteration": true,
     "paths": {
-      "@utils/*": ["utils/*"]
+      "@client/*": ["client/*"],
+      "@steps/*": ["steps/*"],
+      "@storage/*": ["storage/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
