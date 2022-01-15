@@ -10,6 +10,7 @@
     "allowJs": true,
     "downlevelIteration": true,
     "paths": {
+      "@server/*": ["server/*"],
       "@client/*": ["client/*"],
       "@steps/*": ["steps/*"],
       "@storage/*": ["storage/*"]
