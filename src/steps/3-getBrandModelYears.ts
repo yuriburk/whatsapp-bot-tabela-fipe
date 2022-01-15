@@ -1,27 +1,31 @@
-import axios from 'axios'
+import { StepProps, steps } from '@steps/index'
+import { storage } from '@storage/index'
+import { getCategory } from '@steps/0-vehicleCategory'
+import { validateMessage } from '@utils/validation'
+import { api } from '@utils/api'
 
-import { StepProps, steps } from "@steps/index";
-import { storage } from "@storage/index";
-import { getCategory } from '@steps/0-vehicleCategory';
-
-export const getBrandModelYears = async ({ from, message, name }: StepProps) => {
+export const getBrandModelYears = async ({
+  from,
+  message,
+  name
+}: StepProps) => {
   if (!storage[from].brand) {
     return steps[0].step({ from, message, name })
   }
-  if (isNaN(Number(message))) {
-    return 'Opção inválida, envie o código correto'
-  }
+  validateMessage(message)
 
   const category = getCategory(storage[from].category ?? 1)
 
-  const { data } = await axios.get(`https://parallelum.com.br/fipe/api/v1/${category}/marcas/${storage[from].brand}/modelos/${message}/anos`)
+  const { data } = await api.get(
+    `${category}/brands/${storage[from].brand}/models/${message}/years`
+  )
 
   if (!data?.length) {
-    return 'Não encontrei resultados com esse código, tente outro'
+    return 'Não encontrei resultados com esse código, tente outro ou digite SAIR.'
   }
 
-  let msg = 'Ano \n\n'
-  data.forEach((item: {codigo: string, nome: string}, index: number) => {
+  let msg = 'Informe o código da marca do seu veículo: \n\n'
+  data.forEach((item: { codigo: string; nome: string }, index: number) => {
     msg += `${index + 1} - ${item.nome}\n`
   })
 

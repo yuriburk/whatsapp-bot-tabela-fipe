@@ -1,25 +1,25 @@
-import axios from 'axios'
-
-import { StepProps, steps } from "@steps/index";
-import { storage } from "@storage/index";
-import { getCategory } from '@steps/0-vehicleCategory';
+import { StepProps } from '@steps/index'
+import { storage } from '@storage/index'
+import { getCategory } from '@steps/0-vehicleCategory'
+import { api } from '@utils/api'
+import { validateMessage } from '@utils/validation'
 
 export const getBrands = async ({ from, message }: StepProps) => {
-  if (isNaN(Number(message))) {
-    return 'Opção inválida, envie o código correto'
-  }
+  validateMessage(message)
 
   const category = getCategory(message)
 
-  const { data } = await axios.get(`https://parallelum.com.br/fipe/api/v1/${category}/marcas`)
+  const { data } = await api.get(`${category}/brands`)
 
-  let msg = 'Marcas \n\n'
-  data.forEach((item: {codigo: string, nome: string}) => {
-    msg += `${item.codigo} - ${item.nome}\n`
+  let msg = 'Informe o código equivalente da marca do seu veículo: \n\n'
+  data.forEach((item: { code: string; name: string }) => {
+    msg += `$${item.code}${Array(item.code.length - 3)
+      .fill(' ')
+      .join('')} - ${item.name}\n`
   })
 
   storage[from].step = 2
-  storage[from].category = category === 'carros' ? 1 : 2
+  storage[from].category = category === 'cars' ? 1 : 2
 
   return msg
 }

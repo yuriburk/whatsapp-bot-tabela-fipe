@@ -1,21 +1,21 @@
-import axios from 'axios'
-
-import { StepProps, steps } from "@steps/index";
-import { storage } from "@storage/index";
-import { getCategory } from '@steps/0-vehicleCategory';
+import { StepProps, steps } from '@steps/index'
+import { storage } from '@storage/index'
+import { getCategory } from '@steps/0-vehicleCategory'
+import { validateMessage } from '@utils/validation'
+import { api } from '@utils/api'
 
 export const getVehicle = async ({ from, message, name }: StepProps) => {
   if (!storage[from].model) {
     return steps[0].step({ from, message, name })
   }
-  if (isNaN(Number(message))) {
-    return 'Opção inválida, envie o código correto'
-  }
+  validateMessage(message)
 
   const index = Number(message) - 1
 
   const category = getCategory(storage[from].category ?? 1)
-  const response = await axios.get(`https://parallelum.com.br/fipe/api/v1/${category}/marcas/${storage[from].brand}/modelos/${storage[from].model}/anos`)
+  const response = await api.get(
+    `${category}/brands/${storage[from].brand}/models/${storage[from].model}/years`
+  )
 
   if (!response?.data?.length || !response.data[index]) {
     return steps[0].step({ from, message, name })
@@ -23,12 +23,23 @@ export const getVehicle = async ({ from, message, name }: StepProps) => {
 
   const yearCode = response.data[index].codigo
 
-  const { data } = await axios.get(`https://parallelum.com.br/fipe/api/v1/${category}/marcas/${storage[from].brand}/modelos/${storage[from].model}/anos/${yearCode}`)
+  const { data } = await api.get(
+    `${category}/brands/${storage[from].brand}/models/${storage[from].model}/years/${yearCode}`
+  )
   if (!data) {
-    return 'Não encontrei resultados com esse código, tente outro'
+    return 'Não encontrei resultados com esse código, tente outro ou digite SAIR.'
   }
+
+  const { data: car } = await api.get(
+    `${category}/${data.codeFipe}/years/${yearCode}/history`
+  )
 
   storage[from].step = 0
 
-  return `Estas são as informações sobre o seu veículo: \n\n-----------------------------------\nModelo: ${data.Modelo} \n Valor: ${data.Valor}`;
+  return `Estas são as informações sobre o seu veículo: \n\n-----------------------------------\nMarca: ${
+    car.brand
+  }\nModelo: ${car.model}\nAno: ${car.year}\nValor\n: ${car.history.map(
+    ({ month, price }: { month: string; price: string }) =>
+      `${month.charAt(0).toUpperCase() + month.slice(1)} - ${price}\n`
+  )}`
 }

@@ -2,22 +2,25 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "dist",
+    "rootDir": "src",
     "strict": true,
     "strictPropertyInitialization": false,
-    "baseUrl": "./src",
+    "baseUrl": "src",
     "allowJs": true,
     "downlevelIteration": true,
     "paths": {
       "@server/*": ["server/*"],
       "@client/*": ["client/*"],
       "@steps/*": ["steps/*"],
-      "@storage/*": ["storage/*"]
+      "@storage/*": ["storage/*"],
+      "@utils/*": ["utils/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
