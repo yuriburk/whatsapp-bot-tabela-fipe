@@ -21,7 +21,7 @@ function start(client: Client) {
         const text = await step({
           from: message.from,
           message: message.body,
-          name: message.sender.name
+          name: message.sender.pushname
         })
         client
           .sendText(message.from, text)

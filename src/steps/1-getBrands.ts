@@ -10,12 +10,9 @@ export const getBrands = async ({ from, message }: StepProps) => {
   const category = getCategory(message)
 
   const { data } = await api.get(`${category}/brands`)
-
   let msg = 'Informe o código equivalente da marca do seu veículo: \n\n'
   data.forEach((item: { code: string; name: string }) => {
-    msg += `$${item.code}${Array(item.code.length - 3)
-      .fill(' ')
-      .join('')} - ${item.name}\n`
+    msg += `${item.code} - ${item.name}\n`
   })
 
   storage[from].step = 2

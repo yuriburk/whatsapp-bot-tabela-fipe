@@ -15,18 +15,16 @@ export const getBrandModelYears = async ({
   validateMessage(message)
 
   const category = getCategory(storage[from].category ?? 1)
-
   const { data } = await api.get(
     `${category}/brands/${storage[from].brand}/models/${message}/years`
   )
-
   if (!data?.length) {
     return 'Não encontrei resultados com esse código, tente outro ou digite SAIR.'
   }
 
-  let msg = 'Informe o código da marca do seu veículo: \n\n'
-  data.forEach((item: { codigo: string; nome: string }, index: number) => {
-    msg += `${index + 1} - ${item.nome}\n`
+  let msg = 'Informe o código do ano do seu veículo: \n\n'
+  data.forEach((item: { code: string; name: string }, index: number) => {
+    msg += `${index + 1} - ${item.name}\n`
   })
 
   storage[from].step = 4

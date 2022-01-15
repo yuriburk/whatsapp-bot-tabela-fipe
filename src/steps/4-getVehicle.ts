@@ -21,7 +21,7 @@ export const getVehicle = async ({ from, message, name }: StepProps) => {
     return steps[0].step({ from, message, name })
   }
 
-  const yearCode = response.data[index].codigo
+  const yearCode = response.data[index].code
 
   const { data } = await api.get(
     `${category}/brands/${storage[from].brand}/models/${storage[from].model}/years/${yearCode}`
@@ -33,13 +33,14 @@ export const getVehicle = async ({ from, message, name }: StepProps) => {
   const { data: car } = await api.get(
     `${category}/${data.codeFipe}/years/${yearCode}/history`
   )
-
   storage[from].step = 0
 
-  return `Estas são as informações sobre o seu veículo: \n\n-----------------------------------\nMarca: ${
+  return `Estas são as informações sobre o seu veículo: \n\nMarca: ${
     car.brand
-  }\nModelo: ${car.model}\nAno: ${car.year}\nValor\n: ${car.history.map(
-    ({ month, price }: { month: string; price: string }) =>
-      `${month.charAt(0).toUpperCase() + month.slice(1)} - ${price}\n`
-  )}`
+  }\nModelo: ${car.model}\nAno: ${car.modelYear}\nValor: ${car.priceHistory
+    .map(
+      ({ month, price }: { month: string; price: string }) =>
+        `${month.charAt(0).toUpperCase() + month.slice(1)} - ${price}`
+    )
+    .join('\n')}`
 }

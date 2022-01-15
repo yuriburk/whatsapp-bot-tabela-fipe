@@ -13,16 +13,13 @@ export const getBrandModels = async ({ from, message, name }: StepProps) => {
   const category = getCategory(storage[from].category ?? 1)
 
   const { data } = await api.get(`${category}/brands/${message}/models`)
-
-  if (!data?.modelos?.length) {
+  if (!data?.length) {
     return 'Não encontrei resultados com esse código, tente outro ou digite SAIR.'
   }
 
   let msg = 'Informe o código equivalente do modelo do seu veículo: \n\n'
-  data.modelos.forEach((item: { code: string; name: string }) => {
-    msg += `$${item.code}${Array(item.code.length - 4)
-      .fill(' ')
-      .join('')} - ${item.name}\n`
+  data.forEach((item: { code: string; name: string }) => {
+    msg += `${item.code} - ${item.name}\n`
   })
 
   storage[from].step = 3
