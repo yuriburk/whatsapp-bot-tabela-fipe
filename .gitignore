@@ -1,4 +1,9 @@
 node_modules
 dist
 .env
-
+fipe.data.json
+# managed
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed

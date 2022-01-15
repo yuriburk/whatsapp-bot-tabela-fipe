@@ -1,10 +1,10 @@
-import { Whatsapp } from 'venom-bot'
+import { Client } from '@open-wa/wa-automate'
 
 import { createClient } from '@client/index'
 import { getStep, steps } from '@steps/index'
 import { storage } from '@storage/index'
 
-function start(client: Whatsapp) {
+function start(client: Client) {
   client.onMessage(async message => {
     if (message.body === 'SAIR') {
       storage[message.from] = { step: undefined }
@@ -12,7 +12,7 @@ function start(client: Whatsapp) {
     }
     if (
       !message.isGroupMsg &&
-      (message.body === 'FIPE' || storage[message.from].step)
+      (message.body === 'FIPE' || storage[message.from]?.step)
     ) {
       try {
         const currentStep = getStep(message.from)
@@ -37,9 +37,11 @@ function start(client: Whatsapp) {
       }
     }
   })
-
-  process.on('SIGINT', async function () {
-    client.close()
+  client.onStateChanged(state => {
+    if (state === 'CONFLICT' || state === 'UNLAUNCHED') client.forceRefocus()
+    if (state === 'UNPAIRED') {
+      client.logout()
+    }
   })
 }
 
